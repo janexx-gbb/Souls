@@ -1,5 +1,6 @@
 const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 const { getUser, SHOP, ANIMALS } = require('./database.js');
+const { handleRewards } = require('./rewards.js');
 
 async function handleCommand(message) {
   if (message.author.bot || !message.content.startsWith('!')) return;
@@ -8,6 +9,11 @@ async function handleCommand(message) {
   const command = args.shift().toLowerCase();
   const user = getUser(message.author.id);
 
+  // Check if it's a reward command first
+  if (['daily', 'weekly', 'monthly'].includes(command)) {
+    return handleRewards(message, command);
+  }
+
   // 1. HELP COMMAND
   if (command === 'help') {
     const helpEmbed = new EmbedBuilder()
@@ -15,7 +21,7 @@ async function handleCommand(message) {
       .setTitle('🎮 Bot Command List')
       .setDescription('Here are all the available commands you can use:')
       .addFields(
-        { name: '💰 Economy & Jobs', value: '`!bal` — Check coin balance\n`!work` — Work a job to earn coins' },
+        { name: '💰 Economy & Jobs', value: '`!bal` — Check coin balance\n`!work` — Work a job to earn coins\n`!daily` / `!weekly` / `!monthly` — Claim streak rewards' },
         { name: '🎲 Fun & Gambling', value: '`!coinflip <heads|tails> <amount>` — Gamble coins' },
         { name: '🏹 Hunting & Gathering', value: '`!hunt` — Go hunting for animals *(Requires rifle)*' },
         { name: '🛒 Market & Inventory', value: '`!shop` — View shop items\n`!buy <item>` — Buy an item\n`!inv` — Check inventory\n`!sell <item>` — Sell hunted animals' },
