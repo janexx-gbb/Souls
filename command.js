@@ -3,18 +3,19 @@ const { getUser, SHOP, ANIMALS } = require('./database.js');
 const { handleRewards } = require('./rewards.js');
 
 async function handleCommand(message) {
+  // Ignore bots and messages without prefix
   if (message.author.bot || !message.content.startsWith('!')) return;
 
   const args = message.content.slice(1).trim().split(/ +/);
   const command = args.shift().toLowerCase();
   const user = getUser(message.author.id);
 
-  // Check if it's a reward command first
+  // 1. REWARD COMMANDS (Daily, Weekly, Monthly)
   if (['daily', 'weekly', 'monthly'].includes(command)) {
     return handleRewards(message, command);
   }
 
-  // 1. HELP COMMAND
+  // 2. HELP COMMAND
   if (command === 'help') {
     const helpEmbed = new EmbedBuilder()
       .setColor('#FFD700')
@@ -32,12 +33,12 @@ async function handleCommand(message) {
     return message.reply({ embeds: [helpEmbed] });
   }
 
-  // 2. ECONOMY & BALANCE
+  // 3. ECONOMY & BALANCE
   if (command === 'bal' || command === 'balance') {
     return message.reply(`💳 **${message.author.username}'s Balance:** ${user.balance} coins`);
   }
 
-  // 3. WORK
+  // 4. WORK
   if (command === 'work') {
     const jobs = ['Software Engineer 💻', 'Barista ☕', 'Delivery Driver 🚗', 'Fisherman 🎣'];
     const job = jobs[Math.floor(Math.random() * jobs.length)];
@@ -47,7 +48,7 @@ async function handleCommand(message) {
     return message.reply(`You worked as a **${job}** and earned **${earnings}** coins! 🪙`);
   }
 
-  // 4. FUN (COINFLIP)
+  // 5. FUN (COINFLIP)
   if (command === 'coinflip') {
     const choice = args[0]?.toLowerCase();
     const bet = parseInt(args[1]);
@@ -69,7 +70,7 @@ async function handleCommand(message) {
     }
   }
 
-  // 5. HUNT
+  // 6. HUNT
   if (command === 'hunt') {
     if (!user.inventory['rifle'] || user.inventory['rifle'] <= 0) {
       return message.reply('❌ You need a **Hunting Rifle 🔫** to hunt! Buy one using `!buy rifle`.');
@@ -87,7 +88,7 @@ async function handleCommand(message) {
     return message.reply(`🏹 **Bullseye!** You hunted a **${caught.name}**! Added to inventory.`);
   }
 
-  // 6. MARKET (SHOP, BUY, INV, SELL)
+  // 7. MARKET (SHOP, BUY, INV, SELL)
   if (command === 'shop') {
     let shopMsg = '**🛒 ITEM SHOP**\n\n';
     for (const [id, item] of Object.entries(SHOP)) {
@@ -135,7 +136,7 @@ async function handleCommand(message) {
     return message.reply(`💰 You sold 1 **${itemId}** for **${price}** coins!`);
   }
 
-  // 7. ADMIN COMMANDS
+  // 8. ADMIN COMMANDS
   if (['give', 'take', 'resetbal'].includes(command)) {
     if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
       return message.reply('❌ You do not have permission to use admin commands!');
