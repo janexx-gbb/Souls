@@ -152,3 +152,20 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(process.env.TOKEN);
+
+// HELP COMMAND
+  if (command === 'help') {
+    const helpEmbed = new EmbedBuilder()
+      .setColor('#FFD700')
+      .setTitle('🎮 Bot Command List')
+      .setDescription('Here are all the available commands you can use:')
+      .addFields(
+        { name: '💰 Economy & Jobs', value: '`!bal` or `!balance` — Check your coin balance\n`!work` — Work a job to earn coins' },
+        { name: '🎲 Games & Gambling', value: '`!coinflip <heads|tails> <amount>` — Gamble your coins' },
+        { name: '🏹 Hunting & Gathering', value: '`!hunt` — Go hunting for animals *(Requires a rifle)*' },
+        { name: '🛒 Market & Inventory', value: '`!shop` — View items in the shop\n`!buy <item_name>` — Buy an item\n`!inv` or `!inventory` — Check your items\n`!sell <item_name>` — Sell hunted animals for coins' }
+      )
+      .setFooter({ text: 'Souls Bot • Dank Memer Style' });
+
+    return message.reply({ embeds: [helpEmbed] });
+  }
